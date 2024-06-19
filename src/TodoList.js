@@ -8,6 +8,7 @@ function TodoList() {
     return savedTodos ? JSON.parse(savedTodos) : [];
   });
   const [inputValue, setInputValue] = useState('');
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos));
@@ -20,16 +21,35 @@ function TodoList() {
     }
   };
 
+  const getFilteredTodos = () => {
+    if (filter === 'completed') {
+      return todos.filter(todo => todo.completed);
+    }
+    if (filter === 'incomplete') {
+      return todos.filter(todo => !todo.completed);
+    }
+    return todos;
+  };
+
   return (
-    <div>
-      <input
-        type="text"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-      <button onClick={addTodo}>Add Todo</button>
-      <ul>
-        {todos.map((todo, index) => (
+    <div className="mt-4">
+      <div className="input-group mb-3">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Add a new todo"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <button className="btn btn-primary" onClick={addTodo}>Add Todo</button>
+      </div>
+      <div className="btn-group mb-3">
+        <button className="btn btn-outline-secondary" onClick={() => setFilter('all')}>All</button>
+        <button className="btn btn-outline-secondary" onClick={() => setFilter('completed')}>Completed</button>
+        <button className="btn btn-outline-secondary" onClick={() => setFilter('incomplete')}>Incomplete</button>
+      </div>
+      <ul className="list-group">
+        {getFilteredTodos().map((todo, index) => (
           <Todo key={index} todo={todo} index={index} setTodos={setTodos} todos={todos} />
         ))}
       </ul>
